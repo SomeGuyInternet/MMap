@@ -14,7 +14,7 @@ int main()
 	memcpy(DLLHack, dllpath + fileLen.length() + 4, std::stoi(fileLen));
 	*/
 
-	std::string dllpath = "H:\\Projects\\testdll\\Release\\test.dll";
+	std::string dllpath = "H:\\Projects\\test.dll";
 	DWORD pid;
 	while (!(pid = Utils::FindProcessByName(L"csgo.exe")))
 	{
@@ -24,13 +24,17 @@ int main()
 	Process proc;
 	proc.SetPid(pid);
 
-	MMap mmap(proc);
-	mmap.CreateRPCEnvironment();
-	if (!mmap.MapModule(dllpath))
-		MessageBox(NULL, L"Unknown error.\n Please try again.", L"Error", MB_OK | MB_ICONEXCLAMATION);
-	else
+	if (proc.Attach())
 	{
-		MessageBox(NULL, L"Worked!", L"Error", MB_OK | MB_ICONEXCLAMATION);
+		MMap mmap(proc);
+		mmap.CreateRPCEnvironment();
+
+		if (!mmap.MapModule(dllpath))
+			MessageBox(NULL, L"Unknown error.\n Please try again.", L"Error", MB_OK | MB_ICONEXCLAMATION);
+		else
+		{
+			MessageBox(NULL, L"Worked!", L"Error", MB_OK | MB_ICONEXCLAMATION);
+		}
 	}
 
 	system("pause");
