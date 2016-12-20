@@ -24,7 +24,10 @@ public:
 	bool MapModule(std::string path)
 	{
 		if (!MapModuleInternal(path))
-			std::cout << "MapModuleInternal Fail" << std::endl; //return false;
+		{
+			std::cout << "MapModuleInternal fail" << std::endl;
+			return false;
+		}
 		else
 			std::cout << path.c_str() << " mapped correctly " << std::endl;
 
@@ -198,9 +201,13 @@ public:
 		asmjit::JitRuntime jitruntime;
 		asmjit::X86Assembler a(&jitruntime);
 
+		std::cout << "jitruntime" << std::endl;
+
 		//Prolog
 		a.push(asmjit::x86::ebp);
 		a.mov(asmjit::x86::ebp, asmjit::x86::esp);
+
+		std::cout << "Push?" << std::endl;
 		// There is an entry point in the dll. Maybe it cannot find it? i do not know.
 		//call Entrypoint
 		a.push(0);
@@ -209,9 +216,13 @@ public:
 		a.mov(asmjit::x86::eax, (unsigned int)(file.epRVA + (DWORD)mem._base));
 		a.call(asmjit::x86::eax);
 
+		std::cout << "Execute Code?" << std::endl;
+		
 		//Epilog
 		a.mov(asmjit::x86::esp, asmjit::x86::ebp);
 		a.pop(asmjit::x86::ebp);
+
+		std::cout << "EpiLog?" << std::endl;
 
 		a.ret();
 
@@ -224,7 +235,9 @@ public:
 			std::cout << "CreateRemoteThread failed " << std::endl;
 			//TRACE("CreateRemoteThread failed");
 
+		std::cout << "ThreadIssue??" << std::endl;
 		WaitForSingleObject(thread, INFINITE);
+		std::cout << "No?" << std::endl;
 	}
 
 	DWORD MapDependancy(std::string szDllName)
